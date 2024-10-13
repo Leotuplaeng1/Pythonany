@@ -5,141 +5,78 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vehicle Classification</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/index.css') }}">
-    <!-- <style>
-        /* body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        /* ส่วนจัดเรียงซ้ายขวา */
-        .container {
-            display: flex; /* ใช้ Flexbox */
-            justify-content: space-between; /* จัดให้มีพื้นที่ว่างระหว่างองค์ประกอบ */
-            width: 80%; /* กำหนดความกว้างของ Container */
-            max-width: 1200px; /* กำหนดความกว้างสูงสุด */
-            margin: 20px 0; /* กำหนดระยะห่างบนล่าง */
-        }
-
-        /* ฝั่งซ้าย */
-        .left {
-            flex: 1; /* ใช้พื้นที่ทั้งหมดที่เหลือ */
-            text-align: left; /* จัดข้อความไปทางซ้าย */
-            margin-right: 20px; /* ระยะห่างด้านขวา */
-        }
-
-        /* ฝั่งขวา */
-        .right {
-            flex: 1; /* ใช้พื้นที่ทั้งหมดที่เหลือ */
-            text-align: left; /* จัดข้อความไปทางซ้าย */
-        }
-
-        /* ส่วนหัว */
-        h1 {
-            color: #333;
-            margin-top: 50px;
-            margin-bottom: 20px;
-            font-size: 2.5em;
-        }
-
-        /* ฟอร์ม */
-        form {
-            padding: 30px;
-            border-radius: 10px;
-            text-align: center;
-            max-width: 400px;
-            width: 90%;
-            margin-bottom: 30px;
-        }
-
-        /* ปุ่ม */
-        button {
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        /* ผลลัพธ์ */
-        .result {
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            width: 90%;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .result h2 {
-            color: #ff1d1d;
-            font-size: 2em;
-            margin: 0;
-        }
-
-        /* รูปภาพ */
-        .captured-image {
-            max-width: 600px;
-            width: 90%;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* การตอบสนองบนมือถือ */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            button {
-                width: 100%;
-                padding: 15px;
-            }
-
-            .result h2 {
-                font-size: 1.5em;
-            }
-        } 
-    </style> -->
 </head>
 <body>
-    <h1>Vehicle Classification</h1>
-    <div class="container">
-        <div class="left">
-            <form method="POST">
-                <button type="submit">Capture Image</button>
-            </form>
-        </div>
-        <div class="right">
-            {% if captured_image %}
-                <div>
-                    <h3>Captured Image:</h3>
-                    <img src="{{ url_for('static', filename='uploads/captured_image_timestamp.jpg') }}" alt="Captured Image" class="captured-image">
-
-                </div>
-            {% endif %}
-        </div>
-        
+    <video class="video-background" autoplay loop muted>
+        <source src="/source/background2.mp4" type="video/mp4">
+    </video>
+    <div class="Head">
+        <h1>Helmet Detection and Vehicle Classification</h1>
     </div>
 
-    {% if result %}
-        <div class="result">
-            <h2>{{ result }}</h2>
+    <div class="container">
+        <div class="left">
+            <!-- ส่วนเปิดกล้องและแคปเจอร์ภาพ -->
+            <video id="video" width="320" height="240" autoplay></video>
+            <canvas id="canvas" width="320" height="240" style="display:none;"></canvas>
+
+            <!-- ปุ่มสำหรับแคปเจอร์ภาพ -->
+            <button id="snap">Capture Image</button>
+
+            <!-- ฟอร์มสำหรับส่งภาพ -->
+            <form id="uploadForm" method="POST">
+                <input type="hidden" name="image" id="imageData">
+                <button type="submit">Upload Photo</button>
+            </form>
         </div>
-    {% endif %}
+
+        <div class="right">
+            <div id="result"></div>
+        </div>
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const snapButton = document.getElementById('snap');
+        const uploadForm = document.getElementById('uploadForm');
+        const imageDataInput = document.getElementById('imageData');
+        const resultDiv = document.getElementById('result');
+
+        // ขอสิทธิ์เข้าถึงกล้อง
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((err) => {
+                console.error("Error accessing the camera: ", err);
+            });
+
+        // ฟังก์ชันสำหรับแคปเจอร์ภาพจากกล้อง
+        snapButton.addEventListener('click', () => {
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = canvas.toDataURL('image/png'); // แปลงเป็น base64
+            imageDataInput.value = imageData; // ใส่ base64 ลงใน hidden input
+        });
+
+        // ส่งภาพไปยัง Flask
+        uploadForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(uploadForm);
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                resultDiv.innerHTML = `<h2>${data.result}</h2>`;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
 </body>
 </html>

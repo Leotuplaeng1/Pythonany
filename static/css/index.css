@@ -1,108 +1,58 @@
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f6f9;
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
+    justify-content: center; /* จัดแนวกลางในแนวนอน */
+    align-items: center; /* จัดแนวกลางในแนวตั้ง */
+    background-color: black; /* แบ็คกราวด์สีดำ */
 }
 
-/* ส่วนจัดเรียงซ้ายขวา */
+.video-background {
+    position: absolute; /* ทำให้วิดีโออยู่ด้านล่าง */
+    top: 0;
+    left: 0;
+    width: 100%; /* ขยายเต็มจอ */
+    height: 100%; /* ขยายเต็มจอ */
+    object-fit: cover; /* ให้วิดีโอปรับขนาดตามหน้าจอ */
+    z-index: -1; /* ทำให้วิดีโออยู่ด้านหลัง */
+}
+
+.Head {
+    text-align: center; /* จัดข้อความให้อยู่กลาง */
+    color: white; /* สีตัวอักษรเป็นสีขาว */
+    position: relative; /* ทำให้ Head อยู่เหนือวิดีโอ */
+    z-index: 1; /* อยู่ด้านหน้า */
+}
+
 .container {
-    display: flex; /* ใช้ Flexbox */
-    justify-content: space-between; /* จัดให้มีพื้นที่ว่างระหว่างองค์ประกอบ */
-    width: 80%; /* กำหนดความกว้างของ Container */
-    max-width: 1200px; /* กำหนดความกว้างสูงสุด */
-    margin: 20px 0; /* กำหนดระยะห่างบนล่าง */
+    display: flex;
+    justify-content: center; /* จัดแนวกลางในแนวนอน */
+    align-items: center; /* จัดแนวกลางในแนวตั้ง */
+    flex-direction: row; /* แสดงผลในแนวนอน */
+    gap: 20px; /* ช่องว่างระหว่างสองคอลัมน์ */
+    position: relative; /* เพื่อให้อยู่เหนือวิดีโอ */
+    z-index: 1; /* อยู่ด้านหน้า */
 }
 
-/* ฝั่งซ้าย */
-.left {
-    flex: 1; /* ใช้พื้นที่ทั้งหมดที่เหลือ */
-    text-align: left; /* จัดข้อความไปทางซ้าย */
-    margin-right: 20px; /* ระยะห่างด้านขวา */
+.left, .right {
+    background-color: rgba(255, 255, 255, 0.8); /* พื้นหลังแบบโปร่งใส */
+    border-radius: 10px; /* มุมกลม */
+    padding: 20px; /* เพิ่มระยะห่างภายใน */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* เงา */
 }
 
-/* ฝั่งขวา */
-.right {
-    flex: 1; /* ใช้พื้นที่ทั้งหมดที่เหลือ */
-    text-align: left; /* จัดข้อความไปทางซ้าย */
+video {
+    width: 640px; /* ขนาดความกว้างของวิดีโอ */
+    height: 480px; /* ขนาดความสูงของวิดีโอ */
+    border-radius: 10px; /* มุมกลม */
 }
 
-/* ส่วนหัว */
-h1 {
-    color: #333;
-    margin-top: 50px;
-    margin-bottom: 20px;
-    font-size: 2.5em;
-}
-
-/* ฟอร์ม */
-form {
-    padding: 30px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 400px;
-    width: 90%;
-    margin-bottom: 30px;
-}
-
-/* ปุ่ม */
-button {
-    background-color: #007BFF;
-    color: #fff;
-    border: none;
-    padding: 15px 30px;
-    font-size: 1em;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-/* ผลลัพธ์ */
-.result {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 90%;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.result h2 {
-    color: #ff1d1d;
-    font-size: 2em;
-    margin: 0;
-}
-
-/* รูปภาพ */
-.captured-image {
-    max-width: 600px;
-    width: 90%;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* การตอบสนองบนมือถือ */
-@media (max-width: 600px) {
-    h1 {
-        font-size: 2em;
-    }
-
-    button {
-        width: 100%;
-        padding: 15px;
-    }
-
-    .result h2 {
-        font-size: 1.5em;
-    }
+#result {
+    margin-top: 20px; /* ระยะห่างจากส่วนบน */
+    color: black; /* สีตัวอักษร */
 }
